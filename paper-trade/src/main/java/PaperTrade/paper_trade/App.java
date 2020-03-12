@@ -42,10 +42,10 @@ public class App {
     			}
     		}
     		else if(s.equals("2")) {
-			    			
+    			System.out.println("Which stock would you like to buy?");
 			}
     		else if(s.equals("3")) {
-				
+    			System.out.println("Which stock would you like to sell?");
 			}
     		else if(s.equals("4")) {
     			break;
