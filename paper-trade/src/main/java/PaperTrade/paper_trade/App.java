@@ -64,10 +64,10 @@ public class App {
     				myAccount.withdrawFromAccount();
     			}
     			else if(s.equals("5")) {
-    				System.out.println(myAccount.balance);
+    				System.out.println(myAccount.overallProfit);
     			}
     			else if(s.equals("6")) {
-    				System.out.println(myAccount.balance);
+    				myAccount.reset();
     			}
     			else {
     				System.out.println("Please enter in a valid number.");
