@@ -21,6 +21,9 @@ public class Stock2 {
 	public void buyMore(double p, int q) {
 		quantity += q;
 		avgPrice = (avgPrice + (p * q)) / quantity;
+		BigDecimal bd = new BigDecimal(avgPrice);
+		bd = bd.round(new MathContext(2));
+		avgPrice = bd.doubleValue();
 	}
 	public double percentChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
