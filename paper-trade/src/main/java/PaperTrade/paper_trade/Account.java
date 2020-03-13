@@ -22,8 +22,8 @@ public class Account {
 	}
 	public void depositToAccount() {
 		Scanner in = new Scanner(System.in);
-		System.out.println("How much would you like to deposit to your account?");
 		while(true) {
+			System.out.println("How much would you like to deposit to your account?");
 			try {
 				double amount = in.nextDouble();
 				balance += amount;
