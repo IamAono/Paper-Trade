@@ -1,11 +1,17 @@
 package PaperTrade.paper_trade;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Account {
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
+public class Account implements Serializable{
 	ArrayList<Stock2> myStocks;
 	double overallProfit;
 	double balance;
@@ -16,10 +22,11 @@ public class Account {
 	}
 	public void viewStocks() throws IOException {
 		for(Stock2 s : myStocks) {
-			System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", % change: " + s.percentChange());
-			System.out.println(", $ change: " + s.dollarChange());
+			System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", average cost: " + s.avgPrice);
+			System.out.println(", % change: " + s.percentChange() + ", $ change: " + s.dollarChange());
 		}
 	}
+	/*Can deposit an infinite amount.*/
 	public void depositToAccount() {
 		Scanner in = new Scanner(System.in);
 		while(true) {
@@ -64,6 +71,48 @@ public class Account {
 		}
 		else if(!s.equals("2")){
 			System.out.println("Please enter a valid number.");
+		}
+	}
+	public void sell(String ticker) throws IOException {
+		boolean own = false;
+		Stock2 s2 = new Stock2();
+		for(Stock2 s : myStocks) {
+			if(s.ticker.equals(ticker)) {
+				own = true;
+				s2 = s;
+				break;
+			}
+		}
+		if(own) {
+			System.out.println("How many shares would you like to sell?");
+			Scanner in = new Scanner(System.in);
+			int shares;
+			while(true) {
+				try {
+					shares = in.nextInt();
+					break;
+				}
+				catch(InputMismatchException e) {
+					System.out.println("Please enter an integer.");
+				}
+			}
+			if(s2.sell(shares)) {
+				/*If all of the shares of that stock are sold, remove that stock from myStocks.*/
+				if(s2.quantity == shares) { 
+					myStocks.remove(myStocks.indexOf(s2));
+				}
+				Stock stock = YahooFinance.get(ticker);
+				BigDecimal priceNow = stock.getQuote().getPrice();
+				priceNow = priceNow.round(new MathContext(2));
+				float thePrice = priceNow.floatValue();
+				String printOut = String.format("You have sold %d shares of %s at %f", shares, ticker, thePrice);
+				overallProfit += (thePrice - s2.avgPrice) * shares;
+				balance += thePrice * shares;
+				System.out.println(printOut);
+			}
+		}
+		else {
+			System.out.println("You do not own that stock.");
 		}
 	}
 }

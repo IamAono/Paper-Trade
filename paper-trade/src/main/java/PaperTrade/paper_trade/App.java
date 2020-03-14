@@ -48,7 +48,7 @@ public class App {
     		}
     		else if(s.equals("2")) {
     			System.out.println("What would you like to do with your account?\n1. view my stocks");
-    			System.out.println(" 2.view my balance\n3. deposit to my account\n4. withdraw from my account");
+    			System.out.println("2.view my balance\n3. deposit to my account\n4. withdraw from my account");
     			System.out.println("5.view my overall profit\n6. reset my account");
     			s = in.next();
     			if(s.equals("1")) {
@@ -118,8 +118,25 @@ public class App {
 			}
     		else if(s.equals("4")) {
     			System.out.println("Which stock would you like to sell?");
+    			String sell = in.next();
+    			String ticker;
+    			while(true) {
+    				ticker = in.next();
+    				ticker.toUpperCase();
+            		try {
+            			Stock stock = YahooFinance.get(ticker);
+            			break;
+            		}
+            		catch(Exception NullPointerException) {
+            			System.out.println("That is not a valid ticker symbol, please try again.");
+            		}
+    			}
+    			myAccount.sell(ticker);
 			}
     		else if(s.equals("5")) {
+    			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));
+    			out.writeObject(myAccount);
+    			out.close();
     			break;
     		}
     		else {

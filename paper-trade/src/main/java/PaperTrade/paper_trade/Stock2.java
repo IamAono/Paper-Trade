@@ -1,17 +1,21 @@
 package PaperTrade.paper_trade;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
-public class Stock2 {
+public class Stock2 implements Serializable {
 	String ticker;
 	String name;
 	double avgPrice;
 	int quantity;
+	public Stock2() {
+		
+	}
 	public Stock2(String t, String n, double p, int q) {
 		ticker = t.toUpperCase();
 		name = n;
@@ -24,6 +28,16 @@ public class Stock2 {
 		BigDecimal bd = new BigDecimal(avgPrice);
 		bd = bd.round(new MathContext(2));
 		avgPrice = bd.doubleValue();
+	}
+	public boolean sell(int q) {
+		if(q > quantity) {
+			System.out.println("You do not own that many shares.");
+			return false;
+		}
+		else {
+			quantity -= q;
+			return true;
+		}
 	}
 	public double percentChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
