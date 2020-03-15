@@ -21,9 +21,15 @@ public class Account implements Serializable{
 		balance = 0;
 	}
 	public void viewStocks() throws IOException {
-		for(Stock2 s : myStocks) {
-			System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", average cost: " + s.avgPrice);
-			System.out.println(", % change: " + s.percentChange() + ", $ change: " + s.dollarChange());
+		if(myStocks.size() == 0) {
+			System.out.println("You don't own any stocks.");
+		}
+		else {
+			for(Stock2 s : myStocks) {
+				System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", shares: " + s.quantity);
+				System.out.println(", average cost: " + s.avgPrice + ", % change: " + s.percentChange());
+				System.out.println(", $ change: " + (s.dollarChange() * s.quantity));
+			}
 		}
 	}
 	/*Can deposit an infinite amount.*/
@@ -60,7 +66,7 @@ public class Account implements Serializable{
 		}
 	}
 	public void reset() {
-		System.out.println("Are you sure you want to reset your account?");
+		System.out.println("Are you sure you want to reset your account?\n1. yes\n2. no");
 		Scanner in = new Scanner(System.in);
 		String s = in.next();
 		if(s.equals("1")) {
@@ -98,6 +104,7 @@ public class Account implements Serializable{
 			}
 			if(s2.sell(shares)) {
 				/*If all of the shares of that stock are sold, remove that stock from myStocks.*/
+				System.out.println("Quantity: " + s2.quantity + " Shares: " + shares);
 				if(s2.quantity == shares) { 
 					myStocks.remove(myStocks.indexOf(s2));
 				}
@@ -108,6 +115,7 @@ public class Account implements Serializable{
 				String printOut = String.format("You have sold %d shares of %s at %f", shares, ticker, thePrice);
 				overallProfit += (thePrice - s2.avgPrice) * shares;
 				balance += thePrice * shares;
+				s2.quantity -= shares;
 				System.out.println(printOut);
 			}
 		}

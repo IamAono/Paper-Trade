@@ -79,7 +79,7 @@ public class App {
     			String ticker;
     			while(true) {
     				ticker = in.next();
-    				ticker.toUpperCase();
+    				ticker = ticker.toUpperCase();
             		try {
             			Stock stock = YahooFinance.get(ticker);
             			break;
@@ -118,11 +118,10 @@ public class App {
 			}
     		else if(s.equals("4")) {
     			System.out.println("Which stock would you like to sell?");
-    			String sell = in.next();
     			String ticker;
     			while(true) {
     				ticker = in.next();
-    				ticker.toUpperCase();
+    				ticker = ticker.toUpperCase();
             		try {
             			Stock stock = YahooFinance.get(ticker);
             			break;

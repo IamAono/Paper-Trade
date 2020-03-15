@@ -35,7 +35,6 @@ public class Stock2 implements Serializable {
 			return false;
 		}
 		else {
-			quantity -= q;
 			return true;
 		}
 	}
