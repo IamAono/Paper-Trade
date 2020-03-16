@@ -27,7 +27,7 @@ public class Account implements Serializable{
 		else {
 			for(Stock2 s : myStocks) {
 				System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", shares: " + s.quantity);
-				System.out.println(", average cost: " + s.avgPrice + ", % change: " + s.percentChange());
+				System.out.print(", average cost: " + s.avgPrice + ", % change: " + s.percentChange());
 				System.out.println(", $ change: " + (s.dollarChange() * s.quantity));
 			}
 		}
@@ -79,6 +79,21 @@ public class Account implements Serializable{
 			System.out.println("Please enter a valid number.");
 		}
 	}
+	public void buy(Stock stock, String ticker, double price, int shares) {
+		boolean newStock = true;
+		for(Stock2 stock2 : myStocks) {
+			if(stock2.ticker.equals(ticker)) {
+				newStock = false;
+				stock2.buyMore(price, shares);
+				break;
+			}
+		}
+		if(newStock) {
+			Stock2 st = new Stock2(ticker, stock.getName(), price, shares);
+			myStocks.add(st);
+		}
+		balance -= price * shares;
+	}
 	public void sell(String ticker) throws IOException {
 		boolean own = false;
 		Stock2 s2 = new Stock2();
@@ -110,7 +125,8 @@ public class Account implements Serializable{
 				}
 				Stock stock = YahooFinance.get(ticker);
 				BigDecimal priceNow = stock.getQuote().getPrice();
-				priceNow = priceNow.round(new MathContext(2));
+				int digits = priceNow.precision() - priceNow.scale();
+				priceNow = priceNow.round(new MathContext(digits + 2));
 				float thePrice = priceNow.floatValue();
 				String printOut = String.format("You have sold %d shares of %s at %f", shares, ticker, thePrice);
 				overallProfit += (thePrice - s2.avgPrice) * shares;

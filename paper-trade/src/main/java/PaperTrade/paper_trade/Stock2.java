@@ -23,10 +23,12 @@ public class Stock2 implements Serializable {
 		quantity = q;
 	}
 	public void buyMore(double p, int q) {
+		double d = avgPrice * quantity;
 		quantity += q;
-		avgPrice = (avgPrice + (p * q)) / quantity;
+		avgPrice = (d + (p * q)) / quantity;
 		BigDecimal bd = new BigDecimal(avgPrice);
-		bd = bd.round(new MathContext(2));
+		int digits = bd.precision() - bd.scale();
+		bd = bd.round(new MathContext(digits + 2));
 		avgPrice = bd.doubleValue();
 	}
 	public boolean sell(int q) {
@@ -41,20 +43,29 @@ public class Stock2 implements Serializable {
 	public double percentChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
 		BigDecimal change = s.getQuote().getPrice();
-		change = change.round(new MathContext(2));
+		int digits = change.precision() - change.scale();
+		change = change.round(new MathContext(digits + 2));
 		BigDecimal avg = new BigDecimal(avgPrice);
-		avg = avg.round(new MathContext(2));
+		digits = avg.precision() - avg.scale();
+		avg = avg.round(new MathContext(digits + 2));
 		change = change.subtract(avg);
-		change = change.divide(avg);
-		change = change.round(new MathContext(2));
-		double theChange = change.doubleValue();
-		return theChange;
+		try {
+			change = change.divide(avg);
+			digits = change.precision() - change.scale();
+			change = change.round(new MathContext(digits + 2));
+			double theChange = change.doubleValue();
+			return theChange;
+		}
+		catch(ArithmeticException e) {
+			return 0;
+		}
 	}
 	public double dollarChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
 		BigDecimal change = s.getQuote().getPrice();
 		BigDecimal avg = new BigDecimal(avgPrice);
 		change = change.subtract(avg);
+		int digits = change.precision() - change.scale();
 		change = change.round(new MathContext(2));
 		double theChange = change.doubleValue();
 		return theChange;

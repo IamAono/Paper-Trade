@@ -26,7 +26,6 @@ public class App {
 			myAccount = (Account) in.readObject();
 			in.close();
 		}
-		ArrayList<Stock2> myStocks = myAccount.myStocks;
         Scanner in = new Scanner(System.in);
     	while(true) {
     		System.out.println("What would you like to do?\n1. view a stock\n2. view my account");
@@ -101,19 +100,15 @@ public class App {
     			}
     			Stock stock = YahooFinance.get(ticker);
     			BigDecimal bd = stock.getQuote().getPrice();
-    			bd = bd.round(new MathContext(2));
+    			int digits = bd.precision() - bd.scale();
+    			bd = bd.round(new MathContext(digits + 2));
     			double price = bd.doubleValue();
-    			boolean newStock = true;
-    			for(Stock2 stock2 : myStocks) {
-    				if(stock2.ticker.equals(ticker)) {
-    					newStock = false;
-    					stock2.buyMore(price, shares);
-    					break;
-    				}
+    			if(price * shares > myAccount.balance) {
+    				System.out.print("You don't have enough money to complete the purchase,");
+    				System.out.println(" please deposit more money into your account.");
     			}
-    			if(newStock) {
-    				Stock2 st = new Stock2(ticker, stock.getName(), price, shares);
-    				myStocks.add(st);
+    			else {
+    				myAccount.buy(stock, ticker, price, shares);
     			}
 			}
     		else if(s.equals("4")) {
