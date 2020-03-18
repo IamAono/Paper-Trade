@@ -39,7 +39,12 @@ public class Account implements Serializable{
 			System.out.println("How much would you like to deposit to your account?");
 			try {
 				double amount = in.nextDouble();
+				BigDecimal bd = new BigDecimal(amount);
+				int digits = bd.precision() - bd.scale();
+				bd.round(new MathContext(digits + 2));
+				amount = bd.doubleValue();
 				balance += amount;
+				System.out.println("Current balance: " + balance);
 				break;
 			}
 			catch(InputMismatchException e) {
@@ -53,11 +58,16 @@ public class Account implements Serializable{
 			System.out.println("How much would you like to withdraw from your account?");
 			try {
 				double amount = in.nextDouble();
+				BigDecimal bd = new BigDecimal(amount);
+				int digits = bd.precision() - bd.scale();
+				bd.round(new MathContext(digits + 2));
+				amount = bd.doubleValue();
 				if(amount > balance) {
 					System.out.println("You do not have that much money to withdraw.");
 					continue;
 				}
 				balance -= amount;
+				System.out.println("Current balance: " + balance);
 				break;
 			}
 			catch(InputMismatchException e) {
