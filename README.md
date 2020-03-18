@@ -1,1 +1,2 @@
 # Paper-Trade
+Paper trading is basically simulating the trading of stocks. So intstead of using real money to trade stocks, you can paper trade in order to not risk losing any money. I used the Yahoo Finance API to get information about stocks and it can be found here: https://financequotes-api.com/. When you visit the website you will see the ways to add the API to your project as a dependency. I made a Maven project and added in the dependency in the pom.xml file. My version number is 3.15.0, but if yours is different put your version number instead of mine.
