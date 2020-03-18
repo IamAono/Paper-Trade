@@ -50,9 +50,8 @@ public class Stock2 implements Serializable {
 		avg = avg.round(new MathContext(digits + 2));
 		change = change.subtract(avg);
 		try {
-			change = change.divide(avg).round(new MathContext(digits + 2));
-			digits = change.precision() - change.scale();
-			change = change.round(new MathContext(digits + 2));
+			MathContext round = new MathContext(2);
+			change = change.divide(avg, round);
 			double theChange = change.doubleValue();
 			return theChange;
 		}
