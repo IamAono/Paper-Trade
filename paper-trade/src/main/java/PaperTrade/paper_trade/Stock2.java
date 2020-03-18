@@ -50,7 +50,7 @@ public class Stock2 implements Serializable {
 		avg = avg.round(new MathContext(digits + 2));
 		change = change.subtract(avg);
 		try {
-			change = change.divide(avg);
+			change = change.divide(avg).round(new MathContext(digits + 2));
 			digits = change.precision() - change.scale();
 			change = change.round(new MathContext(digits + 2));
 			double theChange = change.doubleValue();
@@ -66,7 +66,7 @@ public class Stock2 implements Serializable {
 		BigDecimal avg = new BigDecimal(avgPrice);
 		change = change.subtract(avg);
 		int digits = change.precision() - change.scale();
-		change = change.round(new MathContext(2));
+		change = change.round(new MathContext(digits + 2));
 		double theChange = change.doubleValue();
 		return theChange;
 	}
