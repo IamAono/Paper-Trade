@@ -65,6 +65,9 @@ public class Stock2 implements Serializable {
 		BigDecimal change = s.getQuote().getPrice();
 		BigDecimal avg = new BigDecimal(avgPrice);
 		change = change.subtract(avg);
+		if(change.compareTo(new BigDecimal(0.01)) == -1) {
+			return 0;
+		}
 		int digits = change.precision() - change.scale();
 		change = change.round(new MathContext(digits + 2));
 		double theChange = change.doubleValue();
