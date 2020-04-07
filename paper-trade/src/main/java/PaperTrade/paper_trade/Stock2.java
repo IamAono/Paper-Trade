@@ -53,6 +53,7 @@ public class Stock2 implements Serializable {
 			MathContext round = new MathContext(2);
 			change = change.divide(avg, round);
 			double theChange = change.doubleValue();
+			theChange *= 100;
 			return theChange;
 		}
 		catch(ArithmeticException e) {
