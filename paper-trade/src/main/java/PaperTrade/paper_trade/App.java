@@ -47,8 +47,8 @@ public class App {
     		}
     		else if(s.equals("2")) {
     			System.out.println("What would you like to do with your account?\n1. view my stocks");
-    			System.out.println("2.view my balance\n3. deposit to my account\n4. withdraw from my account");
-    			System.out.println("5.view my overall profit\n6. reset my account");
+    			System.out.println("2. view my balance\n3. deposit to my account\n4. withdraw from my account");
+    			System.out.println("5. view my overall profit\n6. reset my account");
     			s = in.next();
     			if(s.equals("1")) {
     				myAccount.viewStocks();
