@@ -7,16 +7,19 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Calendar;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 public class Account implements Serializable{
 	ArrayList<Stock2> myStocks;
+	ArrayList<String> stockHistory;
 	double overallProfit;
 	double balance;
 	public Account() {
 		myStocks = new ArrayList<Stock2>();
+		stockHistory = new ArrayList<String>();
 		overallProfit = 0;
 		balance = 0;
 	}
@@ -103,6 +106,18 @@ public class Account implements Serializable{
 			myStocks.add(st);
 		}
 		balance -= price * shares;
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		month = (month + 1) % 12;
+		if(month == 0) {
+			month = 1;
+		}
+		String date = String.format("%d/%d/%d", month, day, year);
+		float p = (float) price;
+		String history = String.format("On %s you bought %d shares of %s at %f", date, shares, ticker, p);
+		stockHistory.add(history);
 	}
 	public void sell(String ticker) throws IOException {
 		boolean own = false;
@@ -139,6 +154,17 @@ public class Account implements Serializable{
 				priceNow = priceNow.round(new MathContext(digits + 2));
 				float thePrice = priceNow.floatValue();
 				String printOut = String.format("You have sold %d shares of %s at %f", shares, ticker, thePrice);
+				Calendar c = Calendar.getInstance();
+				int year = c.get(Calendar.YEAR);
+				int month = c.get(Calendar.MONTH);
+				int day = c.get(Calendar.DAY_OF_MONTH);
+				month = (month + 1) % 12;
+				if(month == 0) {
+					month = 1;
+				}
+				String date = String.format("%d/%d/%d", month, day, year);
+				String history = String.format("On %s you sold %d shares of %s at %f", date, shares, ticker, thePrice);
+				stockHistory.add(history);
 				overallProfit += (thePrice - s2.avgPrice) * shares;
 				balance += thePrice * shares;
 				s2.quantity -= shares;
@@ -147,6 +173,11 @@ public class Account implements Serializable{
 		}
 		else {
 			System.out.println("You do not own that stock.");
+		}
+	}
+	public void viewHistory() {
+		for(String s : stockHistory) {
+			System.out.println(s);
 		}
 	}
 }
