@@ -84,6 +84,7 @@ public class Account implements Serializable{
 		String s = in.next();
 		if(s.equals("1")) {
 			myStocks.clear();
+			stockHistory.clear();
 			balance = 0;
 			overallProfit = 0;
 			System.out.println("Your account has been reset.");
