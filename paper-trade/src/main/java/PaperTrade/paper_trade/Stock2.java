@@ -9,10 +9,10 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 public class Stock2 implements Serializable {
-	String ticker;
-	String name;
-	double avgPrice;
-	int quantity;
+	private String ticker;
+	private String name;
+	private double avgPrice;
+	private int quantity;
 	public Stock2() {
 		
 	}
@@ -22,43 +22,51 @@ public class Stock2 implements Serializable {
 		avgPrice = p;
 		quantity = q;
 	}
+	public String getTicker() {
+		return ticker;
+	}
+	public String getName() {
+		return name;
+	}
+	public double getAvgPrice() {
+		return avgPrice;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setAvgPrice(double d) {
+		avgPrice = d;
+	}
+	public void setQuantity(int i) {
+		quantity = i;
+	}
 	public void buyMore(double p, int q) {
 		double d = avgPrice * quantity;
 		quantity += q;
 		avgPrice = (d + (p * q)) / quantity;
-		BigDecimal bd = new BigDecimal(avgPrice);
-		int digits = bd.precision() - bd.scale();
-		bd = bd.round(new MathContext(digits + 2));
-		avgPrice = bd.doubleValue();
-	}
-	public boolean sell(int q) {
-		if(q > quantity) {
-			System.out.println("You do not own that many shares.");
-			return false;
+		String avgPriceStr = Double.toString(avgPrice);
+		String[] split = avgPriceStr.split("\\.");
+		while(split[1].length() < 2) {
+			split[1] += '0';
 		}
-		else {
-			return true;
-		}
+		avgPrice = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
 	}
 	public double percentChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
-		BigDecimal change = s.getQuote().getPrice();
-		int digits = change.precision() - change.scale();
-		change = change.round(new MathContext(digits + 2));
-		BigDecimal avg = new BigDecimal(avgPrice);
-		digits = avg.precision() - avg.scale();
-		avg = avg.round(new MathContext(digits + 2));
-		change = change.subtract(avg);
-		try {
-			MathContext round = new MathContext(2);
-			change = change.divide(avg, round);
-			double theChange = change.doubleValue();
-			theChange *= 100;
-			return theChange;
+		BigDecimal price = s.getQuote().getPrice();
+		String priceStr = price.toString();
+		String[] split = priceStr.split("\\.");
+		while(split[1].length() < 2) {
+			split[1] += '0';
 		}
-		catch(ArithmeticException e) {
-			return 0;
+		double d = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
+		double change = (d - avgPrice) / avgPrice;
+		String changeStr = Double.toString(change);
+		String[] split2 = changeStr.split("\\.");
+		while(split2[1].length() < 2) {
+			split2[1] += '0';
 		}
+		return Double.parseDouble(split2[0] + '.' + split2[1].substring(0, 2));
 	}
 	public double dollarChange() throws IOException {
 		Stock s = YahooFinance.get(ticker);
@@ -68,9 +76,18 @@ public class Stock2 implements Serializable {
 		if(change.compareTo(new BigDecimal(0.01)) == -1) {
 			return 0;
 		}
-		int digits = change.precision() - change.scale();
-		change = change.round(new MathContext(digits + 2));
-		double theChange = change.doubleValue();
+		String changeStr = change.toString();
+		String[] split = changeStr.split("\\.");
+		while(split[1].length() < 2) {
+			split[1] += '0';
+		}
+		double theChange = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
 		return theChange;
+	}
+	public void split() {
+		
+	}
+	public void merge() {
+		
 	}
 }

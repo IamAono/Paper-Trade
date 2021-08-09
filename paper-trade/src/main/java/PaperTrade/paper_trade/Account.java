@@ -13,25 +13,35 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 public class Account implements Serializable{
-	ArrayList<Stock2> myStocks;
-	ArrayList<String> stockHistory;
-	double overallProfit;
-	double balance;
+	private ArrayList<Stock2> myStocks;
+	private ArrayList<String> stockHistory;
+	private double overallProfit;
+	private double balance;
+	
 	public Account() {
 		myStocks = new ArrayList<Stock2>();
 		stockHistory = new ArrayList<String>();
 		overallProfit = 0;
 		balance = 0;
 	}
+	
+	public double getBalance() {
+		return balance;
+	}
+	
+	public double getOverallProfit() {
+		return overallProfit;
+	}
+	
 	public void viewStocks() throws IOException {
 		if(myStocks.size() == 0) {
 			System.out.println("You don't own any stocks.");
 		}
 		else {
 			for(Stock2 s : myStocks) {
-				System.out.print("Ticker: " + s.ticker + ", Name: " + s.name + ", shares: " + s.quantity);
-				System.out.print(", average cost: " + s.avgPrice + ", % change: " + s.percentChange());
-				System.out.println(", $ change: " + (s.dollarChange() * s.quantity));
+				System.out.print("Ticker: " + s.getTicker() + ", Name: " + s.getName() + ", shares: " + s.getQuantity());
+				System.out.print(", average cost: " + s.getAvgPrice() + ", % change: " + s.percentChange());
+				System.out.println(", $ change: " + (s.dollarChange() * s.getQuantity()));
 			}
 		}
 	}
@@ -42,10 +52,12 @@ public class Account implements Serializable{
 			System.out.println("How much would you like to deposit to your account?");
 			try {
 				double amount = in.nextDouble();
-				BigDecimal bd = new BigDecimal(amount);
-				int digits = bd.precision() - bd.scale();
-				bd.round(new MathContext(digits + 2));
-				amount = bd.doubleValue();
+				String amountStr = Double.toString(amount);
+				String[] split = amountStr.split("\\.");
+				while(split[1].length() < 2) {
+					split[1] += '0';
+				}
+				amount = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
 				balance += amount;
 				System.out.println("Current balance: " + balance);
 				break;
@@ -55,16 +67,19 @@ public class Account implements Serializable{
 			}
 		}
 	}
+	
 	public void withdrawFromAccount() {
 		Scanner in = new Scanner(System.in);
 		while(true) {
 			System.out.println("How much would you like to withdraw from your account?");
 			try {
 				double amount = in.nextDouble();
-				BigDecimal bd = new BigDecimal(amount);
-				int digits = bd.precision() - bd.scale();
-				bd.round(new MathContext(digits + 2));
-				amount = bd.doubleValue();
+				String amountStr = Double.toString(amount);
+				String[] split = amountStr.split("\\.");
+				while(split[1].length() < 2) {
+					split[1] += '0';
+				}
+				amount = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
 				if(amount > balance) {
 					System.out.println("You do not have that much money to withdraw.");
 					continue;
@@ -78,6 +93,7 @@ public class Account implements Serializable{
 			}
 		}
 	}
+	
 	public void reset() {
 		System.out.println("Are you sure you want to reset your account?\n1. yes\n2. no");
 		Scanner in = new Scanner(System.in);
@@ -93,10 +109,11 @@ public class Account implements Serializable{
 			System.out.println("Please enter a valid number.");
 		}
 	}
+	
 	public void buy(Stock stock, String ticker, double price, int shares) {
 		boolean newStock = true;
 		for(Stock2 stock2 : myStocks) {
-			if(stock2.ticker.equals(ticker)) {
+			if(stock2.getTicker().equals(ticker)) {
 				newStock = false;
 				stock2.buyMore(price, shares);
 				break;
@@ -124,7 +141,7 @@ public class Account implements Serializable{
 		boolean own = false;
 		Stock2 s2 = new Stock2();
 		for(Stock2 s : myStocks) {
-			if(s.ticker.equals(ticker)) {
+			if(s.getTicker().equals(ticker)) {
 				own = true;
 				s2 = s;
 				break;
@@ -143,17 +160,20 @@ public class Account implements Serializable{
 					System.out.println("Please enter an integer.");
 				}
 			}
-			if(s2.sell(shares)) {
+			if(s2.getQuantity() <= shares) {
+				s2.setQuantity(s2.getQuantity() - shares);
 				/*If all of the shares of that stock are sold, remove that stock from myStocks.*/
-				System.out.println("Quantity: " + s2.quantity + " Shares: " + shares);
-				if(s2.quantity == shares) { 
+				if(s2.getQuantity() == shares) { 
 					myStocks.remove(myStocks.indexOf(s2));
 				}
 				Stock stock = YahooFinance.get(ticker);
-				BigDecimal priceNow = stock.getQuote().getPrice();
-				int digits = priceNow.precision() - priceNow.scale();
-				priceNow = priceNow.round(new MathContext(digits + 2));
-				float thePrice = priceNow.floatValue();
+				BigDecimal price = stock.getQuote().getPrice();
+				String priceStr = price.toString();
+				String[] split = priceStr.split("\\.");
+				while(split[1].length() < 2) {
+					split[1] += '0';
+				}
+				float thePrice = Float.parseFloat(split[0] + '.' + split[1].substring(0, 2));
 				String printOut = String.format("You have sold %d shares of %s at %f", shares, ticker, thePrice);
 				Calendar c = Calendar.getInstance();
 				int year = c.get(Calendar.YEAR);
@@ -166,9 +186,9 @@ public class Account implements Serializable{
 				String date = String.format("%d/%d/%d", month, day, year);
 				String history = String.format("On %s you sold %d shares of %s at %f", date, shares, ticker, thePrice);
 				stockHistory.add(history);
-				overallProfit += (thePrice - s2.avgPrice) * shares;
+				overallProfit += (thePrice - s2.getAvgPrice()) * shares;
+				System.out.println("overall"+overallProfit);
 				balance += thePrice * shares;
-				s2.quantity -= shares;
 				System.out.println(printOut);
 			}
 		}

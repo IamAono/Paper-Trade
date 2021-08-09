@@ -54,7 +54,7 @@ public class App {
     				myAccount.viewStocks();
     			}
     			else if(s.equals("2")) {
-    				System.out.println(myAccount.balance);
+    				System.out.println(myAccount.getBalance());
     			}
     			else if(s.equals("3")) {
     				myAccount.viewHistory();
@@ -66,7 +66,7 @@ public class App {
     				myAccount.withdrawFromAccount();
     			}
     			else if(s.equals("6")) {
-    				System.out.println(myAccount.overallProfit);
+    				System.out.println(myAccount.getOverallProfit());
     			}
     			else if(s.equals("7")) {
     				myAccount.reset();
@@ -106,7 +106,7 @@ public class App {
     			int digits = bd.precision() - bd.scale();
     			bd = bd.round(new MathContext(digits + 2));
     			double price = bd.doubleValue();
-    			if(price * shares > myAccount.balance) {
+    			if(price * shares > myAccount.getBalance()) {
     				System.out.print("You don't have enough money to complete the purchase,");
     				System.out.println(" please deposit more money into your account.");
     			}
