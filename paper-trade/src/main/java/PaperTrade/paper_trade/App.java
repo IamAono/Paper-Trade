@@ -48,7 +48,8 @@ public class App {
     		else if(s.equals("2")) {
     			System.out.println("What would you like to do with your account?\n1. view my stocks");
     			System.out.println("2. view my balance\n3. view my history\n4. deposit to my account");
-    			System.out.println("5. withdraw from my account\n6. view my overall profit\n7. reset my account");
+    			System.out.println("5. withdraw from my account\n6. view my overall profit\n7. Account for split");
+    			System.out.println("8. Account for merge\n9. reset my account");
     			s = in.next();
     			if(s.equals("1")) {
     				myAccount.viewStocks();
@@ -69,6 +70,12 @@ public class App {
     				System.out.println(myAccount.getOverallProfit());
     			}
     			else if(s.equals("7")) {
+    				myAccount.split();
+    			}
+    			else if(s.equals("8")) {
+    				myAccount.merge();
+    			}
+    			else if(s.equals("9")) {
     				myAccount.reset();
     			}
     			else {

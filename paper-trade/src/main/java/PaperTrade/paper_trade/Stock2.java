@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -85,9 +87,32 @@ public class Stock2 implements Serializable {
 		return theChange;
 	}
 	public void split() {
-		
+		System.out.println("1 share before = _ shares now.");
+		Scanner in = new Scanner(System.in);
+		try {
+			int shares = in.nextInt();
+			avgPrice /= shares;
+			String avgPriceStr = Double.toString(avgPrice);
+			String[] split = avgPriceStr.split("\\.");
+			while(split[1].length() < 2) {
+				split[1] += '0';
+			}
+			avgPrice = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
+			quantity *= shares;
+		}
+		catch(InputMismatchException e) {
+			System.out.println("Please enter an integer.");
+		}
 	}
-	public void merge() {
-		
+	@Override
+	public String toString(){
+		try {
+			return("Ticker: " + ticker + ", Name: " + name + ", shares: " + quantity + ", average cost: " + avgPrice +
+					", % change: " + this.percentChange() + ", $ change: " + this.dollarChange());
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 }

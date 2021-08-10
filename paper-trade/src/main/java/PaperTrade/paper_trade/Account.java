@@ -39,9 +39,7 @@ public class Account implements Serializable{
 		}
 		else {
 			for(Stock2 s : myStocks) {
-				System.out.print("Ticker: " + s.getTicker() + ", Name: " + s.getName() + ", shares: " + s.getQuantity());
-				System.out.print(", average cost: " + s.getAvgPrice() + ", % change: " + s.percentChange());
-				System.out.println(", $ change: " + (s.dollarChange() * s.getQuantity()));
+				System.out.println(s.toString());
 			}
 		}
 	}
@@ -199,6 +197,63 @@ public class Account implements Serializable{
 	public void viewHistory() {
 		for(String s : stockHistory) {
 			System.out.println(s);
+		}
+	}
+	public void split() {
+		System.out.println("Enter in the ticker symbol for the stock that split.");
+		Scanner in = new Scanner(System.in);
+		String ticker = in.next();
+		boolean own = false;
+		Stock2 stock = new Stock2();
+		for(Stock2 s : myStocks) {
+			if(s.getTicker().equals(ticker.toUpperCase())) {
+				own = true;
+				stock = s;
+				break;
+			}
+		}
+		if(own) {
+			stock.split();
+		}
+		else {
+			System.out.println("You do not own that stock.");
+		}
+	}
+	public void merge() {
+		System.out.println("Enter in the ticker symbol for the stock that merged.");
+		Scanner in = new Scanner(System.in);
+		String ticker = in.next();
+		boolean own = false;
+		Stock2 stock = new Stock2();
+		for(Stock2 s : myStocks) {
+			if(s.getTicker().equals(ticker.toUpperCase())) {
+				own = true;
+				stock = s;
+				break;
+			}
+		}
+		if(own) {
+			System.out.println("_ shares now = 1 share before.");
+			try {
+				int shares = in.nextInt();
+				// extra shares are sold and added to balance
+				if(stock.getQuantity() < shares) {
+					balance += stock.getAvgPrice() * stock.getQuantity();
+					myStocks.remove(stock);
+				}
+				else {
+					int extraShares = stock.getQuantity() % shares;
+					balance += stock.getAvgPrice() * extraShares;
+					stock.setQuantity(stock.getQuantity() / shares);
+					stock.setAvgPrice(stock.getAvgPrice() * shares);
+				}
+			}
+			catch(InputMismatchException e) {
+				System.out.println("Please enter an integer.");
+			}
+		}
+		else {
+			System.out.println("You do not own that stock.");
 		}
 	}
 }
