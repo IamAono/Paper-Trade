@@ -107,8 +107,8 @@ public class Stock2 implements Serializable {
 	@Override
 	public String toString(){
 		try {
-			return("Ticker: " + ticker + ", Name: " + name + ", shares: " + quantity + ", average cost: " + avgPrice +
-					", % change: " + this.percentChange() + ", $ change: " + this.dollarChange());
+			return("Ticker: " + ticker + ", Name: " + name + ", Shares: " + quantity + ", Average Cost: " + avgPrice +
+					", % Change: " + this.percentChange() + ", $ Change: " + this.dollarChange());
 		}
 		catch(Exception e) {
 			e.printStackTrace();

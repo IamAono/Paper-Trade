@@ -185,7 +185,6 @@ public class Account implements Serializable{
 				String history = String.format("On %s you sold %d shares of %s at %f", date, shares, ticker, thePrice);
 				stockHistory.add(history);
 				overallProfit += (thePrice - s2.getAvgPrice()) * shares;
-				System.out.println("overall"+overallProfit);
 				balance += thePrice * shares;
 				System.out.println(printOut);
 			}
@@ -238,7 +237,8 @@ public class Account implements Serializable{
 				int shares = in.nextInt();
 				// extra shares are sold and added to balance
 				if(stock.getQuantity() < shares) {
-					balance += stock.getAvgPrice() * stock.getQuantity();
+					Stock s = new Stock(ticker);
+					balance += s.getQuote().getPrice().doubleValue() * stock.getQuantity();
 					myStocks.remove(stock);
 				}
 				else {

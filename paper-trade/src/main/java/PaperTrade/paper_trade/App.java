@@ -110,9 +110,12 @@ public class App {
     			}
     			Stock stock = YahooFinance.get(ticker);
     			BigDecimal bd = stock.getQuote().getPrice();
-    			int digits = bd.precision() - bd.scale();
-    			bd = bd.round(new MathContext(digits + 2));
-    			double price = bd.doubleValue();
+    			String bdStr = bd.toString();
+    			String[] split = bdStr.split("\\.");
+    			while(split[1].length() < 2) {
+    				split[1] += '0';
+    			}
+    			double price = Double.parseDouble(split[0] + '.' + split[1].substring(0, 2));
     			if(price * shares > myAccount.getBalance()) {
     				System.out.print("You don't have enough money to complete the purchase,");
     				System.out.println(" please deposit more money into your account.");
